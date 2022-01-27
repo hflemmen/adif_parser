@@ -41,6 +41,9 @@ OPERATOR_COLUMN_NAME = 'OPERATOR'
 DATE_COLUMN_NAME = 'QSO_DATE'
 CALL_COLUMN_NAME = 'CALL'
 TIME_COLUMN_NAME = 'TIME_ON'
+MODE_COLUMN_NAME = 'MODE'
+BAND_COLUMN_NAME = 'BAND'
+
 
 def parse_adif(filename, extra_columns=[]):
     """
@@ -68,6 +71,8 @@ def parse_adif(filename, extra_columns=[]):
                 'date': extract_adif_column(adif_file, DATE_COLUMN_NAME),
                 'time': extract_adif_column(adif_file, TIME_COLUMN_NAME),
                 'call': extract_adif_column(adif_file, CALL_COLUMN_NAME),
+                'mode': extract_adif_column(adif_file, MODE_COLUMN_NAME),
+                'band': extract_adif_column(adif_file, BAND_COLUMN_NAME),
                 'filename': os.path.basename(filename)
                 })
 
@@ -102,3 +107,19 @@ def get_all_logs_in_parent(root_path):
                 path = os.path.join(root, filename)
                 qsos = pd.concat((qsos, parse_adif(path)))
     return qsos
+
+def store_to_csv(pd, outfile):
+    """
+    Stores the pandas dataframe to a csv file for export.
+    Parameters
+    ----------
+    pd: Pandas DataFrame
+
+    Returns
+    -------
+    filepath: str
+    """
+    with open(outfile, 'w') as f:
+        print("date, time, operator, band, mode, call")
+        for i, row in pd.iterrows():
+            f.write(row['date']+",\t"+row['time']+",\t"+row['operator']+",\t"+row['band']+",\t"+row['mode']+",\t"+row["call"]+"\n")
