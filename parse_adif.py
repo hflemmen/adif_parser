@@ -120,6 +120,66 @@ def store_to_csv(pd, outfile):
     filepath: str
     """
     with open(outfile, 'w') as f:
-        print("date, time, operator, band, mode, call")
+        numFaulty = 0
+        f.write("date, time, operator, band, mode, call\n")
         for i, row in pd.iterrows():
-            f.write(row['date']+",\t"+row['time']+",\t"+row['operator']+",\t"+row['band']+",\t"+row['mode']+",\t"+row["call"]+"\n")
+            operator_ = row['operator']
+            mode_ = row['mode']
+            call_ = row["call"]
+            band_ = row['band']
+            date_ = row['date']
+            if row['operator'] is None:
+                numFaulty +=1
+                print(numFaulty,"\t",row['filename'], "lacks operator")
+                operator_ = "Uknown"
+            if row['mode'] is None:
+                numFaulty += 1
+                print(numFaulty,"\t",row['filename'], "lacks mode")
+                mode_ = "Unknown"
+            if row['call'] is None:
+                numFaulty += 1
+                print(numFaulty,"\t",row['filename'], "lacks call")
+                call_ = "Unknown"
+            if row['band'] is None:
+                numFaulty += 1
+                print(numFaulty,"\t",row['filename'], "lacks call")
+                band_ = "Unknown"
+            if row['date'] is None:
+                numFaulty += 1
+                print(numFaulty, "\t", row['filename'], "lacks call")
+                date_ = "Unknown"
+
+            f.write(date_ + ",\t" + row['time'] + ",\t" + operator_ + ",\t" + band_ + ",\t" + mode_ + ",\t" + call_ + "\n")
+
+
+def get_num_before_data(pd, number, regex):
+    """
+    Stores the pandas dataframe to a csv file for export.
+    Parameters
+    ----------
+    pd: Pandas DataFrame
+
+    Returns
+    -------
+    filepath: str
+    """
+    count = 0
+    pd = pd.sort_values(by=['date'], ascending=False)
+    for i, row in pd.iterrows():
+        if count >= number:
+            print(row['date'])
+            break
+        if row['call'] is not None and re.match(regex, row["call"]):
+            print(row['call'])
+            count += 1
+
+
+JAPAN = "J[A-Z][0-9].*|7[J-K].*"
+INDONESIA = "Y[B-H][0-9].*"
+if __name__ == '__main__':
+
+    ROOTPATH = "/home/henrik/ARK/Logg"
+    OUTFILE = "compunded.csv"
+    pd = get_all_logs_in_parent(ROOTPATH)
+    #get_num_before_data(pd, 1065, JAPAN)
+    get_num_before_data(pd, 24, INDONESIA)
