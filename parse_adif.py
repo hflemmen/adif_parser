@@ -176,10 +176,11 @@ def get_num_before_data(pd, number, regex):
 
 JAPAN = "J[A-Z][0-9].*|7[J-K].*"
 INDONESIA = "Y[B-H][0-9].*"
+KOREA = "HL[0-9].*|HM[0-9].*|DS[0-9].*"
 if __name__ == '__main__':
 
     ROOTPATH = "/home/henrik/ARK/Logg"
     OUTFILE = "compunded.csv"
     pd = get_all_logs_in_parent(ROOTPATH)
-    #get_num_before_data(pd, 1065, JAPAN)
-    get_num_before_data(pd, 24, INDONESIA)
+    #get_num_before_data(pd, 163, KOREA + "|" + JAPAN)
+    get_num_before_data(pd, 43, INDONESIA)
